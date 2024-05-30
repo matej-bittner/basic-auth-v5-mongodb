@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useTransition } from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import { CardWrapper } from "@/components/auth/CardWrapper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ResetSchema } from "@/schemas";
+import { NewPasswordSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import {
@@ -17,25 +17,29 @@ import {
 import { Button } from "../ui/button";
 import FormError from "@/components/auth/FormError";
 import FormSuccess from "@/components/auth/FormSucces";
-import { login } from "@/actions/login";
-import { reset } from "@/actions/reset";
-const ResetForm = () => {
+import { useSearchParams } from "next/navigation";
+import newPassword from "@/actions/new-password";
+
+const NewPasswordForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-  const form = useForm<z.infer<typeof ResetSchema>>({
-    resolver: zodResolver(ResetSchema),
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
+  const form = useForm<z.infer<typeof NewPasswordSchema>>({
+    resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
-      email: "",
+      password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof ResetSchema>) => {
+  const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
     setError("");
     setSuccess("");
 
     startTransition(() => {
-      reset(values).then((data) => {
+      newPassword(values, token).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
       });
@@ -45,22 +49,22 @@ const ResetForm = () => {
     <CardWrapper
       linkHref="/auth/login"
       linkTitle="Zpět na přihlášení"
-      headerTitle="Obnovení hesla"
+      headerTitle="Nové Heslo"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
             <FormField
               control={form.control}
-              name="email"
+              name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Nové Heslo</FormLabel>
                   <FormControl>
                     <Input
                       disabled={isPending}
-                      type="email"
-                      placeholder="karelnovak@seznam.cz"
+                      type="password"
+                      placeholder="***********"
                       {...field}
                     />
                   </FormControl>
@@ -72,7 +76,7 @@ const ResetForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button type="submit" className="w-full" disabled={isPending}>
-            Obnovit
+            Změnit Heslo
           </Button>
         </form>
       </Form>
@@ -80,4 +84,4 @@ const ResetForm = () => {
   );
 };
 
-export default ResetForm;
+export default NewPasswordForm;

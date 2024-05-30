@@ -5,6 +5,8 @@ import { z } from "zod";
 import { RegisterSchema } from "@/schemas";
 import { db } from "@/lib/db";
 import { getUserByEmail } from "@/helpers/user";
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -32,5 +34,8 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     },
   });
 
-  return { success: "Vytvoření proběhlo v pořádku" };
+  const verificationToken = await generateVerificationToken(email);
+  await sendVerificationEmail(email, verificationToken.token);
+
+  return { success: "Ověřovací email byl odeslán  " };
 };

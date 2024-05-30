@@ -13,10 +13,9 @@ import {
   FormField,
   FormItem,
   FormMessage,
-  FormDescription,
 } from "../ui/form";
 import { Button } from "../ui/button";
-import { register } from "@/actions/register";
+
 import FormError from "@/components/auth/FormError";
 import FormSuccess from "@/components/auth/FormSucces";
 import { login } from "@/actions/login";
@@ -39,7 +38,7 @@ const LoginForm = () => {
     startTransition(() => {
       login(values).then((data) => {
         setError(data?.error);
-        // setSuccess(data?.success);
+        setSuccess(data?.success);
       });
     });
   };

@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { getUserByEmail } from "@/helpers/user";
 import { LoginSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
+import { generateVerificationToken } from "@/lib/tokens";
 
 export default {
   providers: [
@@ -18,8 +19,11 @@ export default {
           if (!user) return null;
 
           const comparePassword = await bcrypt.compare(password, user.password);
+          if (!comparePassword) {
+            return null;
+          }
 
-          if (comparePassword) return user;
+          return user;
         }
         return null;
       },

@@ -2,7 +2,7 @@
  * everyone can see
  * @type{string[]}
  **/
-export const publicRoutes = ["/"];
+export const publicRoutes = ["/", "/auth/new-verification"];
 
 /**
  * authentication routes
@@ -13,8 +13,7 @@ export const authRoutes = [
   "/auth/login",
   "/auth/register",
   "/auth/reset",
-  "/auth/error",
-  "/auth/new-verification",
+  "/auth/new-password",
 ];
 
 /**

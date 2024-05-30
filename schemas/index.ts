@@ -15,3 +15,6 @@ export const LoginSchema = z.object({
 export const ResetSchema = z.object({
   email: z.string().email(),
 });
+export const NewPasswordSchema = z.object({
+  password: z.string().min(6, { message: "Heslo je příliž krátké" }),
+});
